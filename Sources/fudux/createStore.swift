@@ -19,8 +19,7 @@ public func createStore<State: Equatable>(
 
     func dispatch(action: Action) {
         guard !isDispatching else {
-            assertionFailure("Reducers may not dispatch actions!")
-            return
+            fatalError("Reducers may not dispatch actions!")
         }
 
         isDispatching = true
@@ -34,14 +33,13 @@ public func createStore<State: Equatable>(
             listeners = listeners.filter { $0 !== listener }
         }
         guard !isDispatching else {
-            assertionFailure(
+            fatalError(
             """
                 You may not call store.subscribe() while the reducer is executing. 
                 If you would like to be notified after the store has been updated, subscribe from a
                 component and invoke store.getState() in the callback to access the latest state.
             """
           )
-          return unsubscribeFunction
         }
 
         listeners.append(listener)
