@@ -4,7 +4,7 @@ import XCTest
 final class CreateStoreTests: XCTestCase {
     func test_create_store_sets_correct_initial_state() {
         let initialState = CounterState(count: 0)
-        let sut: Store<CounterState> = createStore
+        let sut: StoreAPI<CounterState> = createStore
 
         let (_, _, getState) = sut(testReducer, initialState)
 
@@ -17,7 +17,7 @@ final class CreateStoreTests: XCTestCase {
     func test_create_store_updates_state_using_reducer() {
         let initialState = CounterState(count: 0)
         let expectedState = CounterState(count: 1)
-        let sut: Store<CounterState> = createStore
+        let sut: StoreAPI<CounterState> = createStore
 
         let (dispatch, _, getState) = sut(testReducer, initialState)
         dispatch(TestAction.input)
@@ -33,7 +33,7 @@ final class CreateStoreTests: XCTestCase {
         var expectedState: CounterState?
         let listener = Listener<CounterState> { expectedState = $0 }
 
-        let sut: Store<CounterState> = createStore
+        let sut: StoreAPI<CounterState> = createStore
         let (dispatch, subscribe, getState) = sut(testReducer, initialState)
         _ = subscribe(listener)
 
@@ -50,7 +50,7 @@ final class CreateStoreTests: XCTestCase {
         var expectedState: CounterState?
         let listener = Listener<CounterState> { expectedState = $0 }
 
-        let sut: Store<CounterState> = createStore
+        let sut: StoreAPI<CounterState> = createStore
         let (dispatch, subscribe, getState) = sut(testReducer, initialState)
         let unsubscribe = subscribe(listener)
 

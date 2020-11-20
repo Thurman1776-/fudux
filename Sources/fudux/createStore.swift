@@ -3,7 +3,7 @@ public typealias DispatchFunction = (Action) -> Void
 public typealias GetState<State> = () -> State
 public typealias Subscribe<State> = (Listener<State>) -> () -> Void
 
-public typealias Store<State> = (@escaping (Action, inout State) -> Void, State) -> (DispatchFunction, Subscribe<State>, GetState<State>)
+public typealias  StoreAPI<State> = (@escaping (Action, inout State) -> Void, State) -> (DispatchFunction, Subscribe<State>, GetState<State>)
 
 public func createStore<State: Equatable>(
     reducer: @escaping (Action, inout State) -> Void,
