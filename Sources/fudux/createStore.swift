@@ -1,3 +1,10 @@
+//
+//  createStore.swift
+//  fudux
+//
+//  Created by Daniel Garcia
+//
+
 public protocol Action {}
 public typealias DispatchFunction = (Action) -> Void
 public typealias GetState<State> = () -> State

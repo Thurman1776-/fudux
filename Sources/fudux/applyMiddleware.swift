@@ -1,3 +1,10 @@
+//
+//  applyMiddleware.swift
+//  fudux
+//
+//  Created by Daniel Garcia
+//
+
 public typealias HandleAction = (Action) -> Void
 public typealias WrapDispatch = (Action) -> Void
 public typealias Middleware<State> = (@escaping GetState<State>, @escaping DispatchFunction) -> (@escaping WrapDispatch) -> HandleAction

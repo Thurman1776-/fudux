@@ -1,3 +1,10 @@
+//
+//  TestsUtils.swift
+//  fuduxTests
+//
+//  Created by Daniel Garcia
+//
+
 @testable import fudux
 
 struct CounterState: Equatable {
