@@ -38,7 +38,7 @@ final class ApplyMiddleware: XCTestCase {
         let middlewares = applyMiddleware(middlewares: [
             supressingMiddleware(),
             // This middleware must not be called
-            firstMiddleware()
+            firstMiddleware(),
         ])
         let (dispatch, _, getState) = middlewares(createStore)(middlewareReducer, counterState)
 
@@ -58,7 +58,7 @@ final class ApplyMiddleware: XCTestCase {
         let expectedState = CounterState(count: 2)
         let counterState = CounterState.initialState
         let middlewares = applyMiddleware(middlewares: [
-            firstMiddleware()
+            firstMiddleware(),
         ])
         let (dispatch, _, getState) = middlewares(createStore)(middlewareReducer, counterState)
 
@@ -74,7 +74,7 @@ final class ApplyMiddleware: XCTestCase {
         let expectedState = CounterState(count: 1)
         let counterState = CounterState.initialState
         let middlewares = applyMiddleware(middlewares: [
-            dispatchingMiddleware()
+            dispatchingMiddleware(),
         ])
         let (dispatch, _, getState) = middlewares(createStore)(middlewareReducer, counterState)
 
@@ -98,7 +98,7 @@ final class ApplyMiddleware: XCTestCase {
         let expectedState = CounterState(count: 4)
         let counterState = CounterState.initialState
         let middlewares = applyMiddleware(middlewares: [
-            storeReadOnlyMiddleware()
+            storeReadOnlyMiddleware(),
         ])
         let (dispatch, _, getState) = middlewares(createStore)(middlewareReducer, counterState)
 
@@ -116,10 +116,6 @@ final class ApplyMiddleware: XCTestCase {
 }
 
 // MARK: - Tests utils
-
-extension CounterState {
-    static let initialState = CounterState(count: 0)
-}
 
 private enum MiddlewareActions: Action {
     case first
@@ -178,8 +174,8 @@ private func secondMiddleware() -> Middleware<CounterState> {
     }
 }
 
-// This middleware is effectively supressing the incoming action 
-// preveting it to reach the store's reducer 
+// This middleware is effectively supressing the incoming action
+// preveting it to reach the store's reducer
 private func supressingMiddleware() -> Middleware<CounterState> {
     { _, _ in { _ in
         { action in
@@ -213,10 +209,10 @@ private func dispatchingMiddleware() -> Middleware<CounterState> {
 }
 
 private func storeReadOnlyMiddleware() -> Middleware<CounterState> {
-    { getState, dispatchFunction in { next in
+    { _, dispatchFunction in { next in
         { action in
             next(action)
-            
+
             switch action {
             case MiddlewareActions.first:
                 saveAction(action: action)

@@ -64,20 +64,3 @@ final class CreateStoreTests: XCTestCase {
         )
     }
 }
-
-// MARK: - Tests data types
-
-struct CounterState: Equatable {
-    let count: Int
-}
-
-func testReducer(action: Action, state: inout CounterState) {
-    switch action as! TestAction {
-    case .input:
-        state = CounterState(count: state.count + 1)
-    }
-}
-
-enum TestAction: Action {
-    case input
-}
