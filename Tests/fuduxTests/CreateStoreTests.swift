@@ -71,7 +71,7 @@ struct CounterState: Equatable {
     let count: Int
 }
 
-func testReducer(action: Action, state: inout CounterState) -> Void {
+func testReducer(action: Action, state: inout CounterState) {
     switch action as! TestAction {
     case .input:
         state = CounterState(count: state.count + 1)
