@@ -209,18 +209,20 @@ private func dispatchingMiddleware() -> Middleware<CounterState> {
 }
 
 private func storeReadOnlyMiddleware() -> Middleware<CounterState> {
-    { _, dispatchFunction in { next in
+    { getState, dispatchFunction in { next in
         { action in
-            next(action)
-
             switch action {
             case MiddlewareActions.first:
+                next(action)
                 saveAction(action: action)
                 dispatchFunction(MiddlewareActions.fourth)
             case MiddlewareActions.fourth:
-                saveAction(action: action)
+                if getState().count == 1 {
+                    saveAction(action: action)
+                    next(action)
+                }
             default:
-                break
+                next(action)
             }
         }
     }
