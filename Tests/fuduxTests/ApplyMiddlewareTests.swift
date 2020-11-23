@@ -17,11 +17,11 @@ final class ApplyMiddleware: XCTestCase {
     func test_middlewares_are_run_in_correct_order() {
         let expectedState = CounterState(count: 2)
         let counterState = CounterState(count: 0)
-        let middlewares = applyMiddleware(middlewares: [
+        let sut = applyMiddleware(middlewares: [
             firstMiddleware(),
             secondMiddleware(),
         ])
-        let (dispatch, _, getState) = middlewares(createStore)(middlewareReducer, counterState)
+        let (dispatch, _, getState) = sut(createStore)(middlewareReducer, counterState)
 
         dispatch(MiddlewareActions.first)
 
@@ -42,12 +42,12 @@ final class ApplyMiddleware: XCTestCase {
     func test_middlewares_can_supress_actions() {
         let expectedState = CounterState(count: 0)
         let counterState = CounterState.initialState
-        let middlewares = applyMiddleware(middlewares: [
+        let sut = applyMiddleware(middlewares: [
             supressingMiddleware(),
             // This middleware must not be called
             firstMiddleware(),
         ])
-        let (dispatch, _, getState) = middlewares(createStore)(middlewareReducer, counterState)
+        let (dispatch, _, getState) = sut(createStore)(middlewareReducer, counterState)
 
         dispatch(MiddlewareActions.fourth)
 
@@ -64,10 +64,10 @@ final class ApplyMiddleware: XCTestCase {
     func test_middlewares_can_replace_action() {
         let expectedState = CounterState(count: 2)
         let counterState = CounterState.initialState
-        let middlewares = applyMiddleware(middlewares: [
+        let sut = applyMiddleware(middlewares: [
             firstMiddleware(),
         ])
-        let (dispatch, _, getState) = middlewares(createStore)(middlewareReducer, counterState)
+        let (dispatch, _, getState) = sut(createStore)(middlewareReducer, counterState)
 
         dispatch(MiddlewareActions.first)
 
@@ -80,10 +80,10 @@ final class ApplyMiddleware: XCTestCase {
     func test_middlewares_can_dispatch_actions() {
         let expectedState = CounterState(count: 1)
         let counterState = CounterState.initialState
-        let middlewares = applyMiddleware(middlewares: [
+        let sut = applyMiddleware(middlewares: [
             dispatchingMiddleware(),
         ])
-        let (dispatch, _, getState) = middlewares(createStore)(middlewareReducer, counterState)
+        let (dispatch, _, getState) = sut(createStore)(middlewareReducer, counterState)
 
         dispatch(MiddlewareActions.third)
 
@@ -104,10 +104,10 @@ final class ApplyMiddleware: XCTestCase {
     func test_middlewares_can_retrieve_current_state() {
         let expectedState = CounterState(count: 4)
         let counterState = CounterState.initialState
-        let middlewares = applyMiddleware(middlewares: [
+        let sut = applyMiddleware(middlewares: [
             storeReadOnlyMiddleware(),
         ])
-        let (dispatch, _, getState) = middlewares(createStore)(middlewareReducer, counterState)
+        let (dispatch, _, getState) = sut(createStore)(middlewareReducer, counterState)
 
         dispatch(MiddlewareActions.first)
 
