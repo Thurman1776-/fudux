@@ -17,9 +17,9 @@ final class ReduxIntegrationTests: XCTestCase {
         let middleware = applyMiddleware(middlewares: [reduxMiddleware()])
         let (sutDispatch, sutSubscribe, sutGetState) = middleware(createStore)(reduxReducer, ReduxAppState.initialState)
         _ = sutSubscribe(subscriber)
-        
+
         sutDispatch(ReduxAction.setTitle("New title"))
-        
+
         XCTAssert(
             expectedState.title == sutGetState().title,
             "Expected titles to match but got \(expectedState.title) instead"
@@ -33,16 +33,16 @@ final class ReduxIntegrationTests: XCTestCase {
             "Expected result to be <.idle> but got \(expectedState.sideEffectResult)"
         )
     }
-    
+
     func test_loading_state_is_updated_by_reducer_and_subscriber_gets_updated() {
         var expectedState: ReduxAppState!
         let subscriber = Listener<ReduxAppState> { expectedState = $0 }
         let middleware = applyMiddleware(middlewares: [reduxMiddleware()])
         let (sutDispatch, sutSubscribe, sutGetState) = middleware(createStore)(reduxReducer, ReduxAppState.initialState)
         _ = sutSubscribe(subscriber)
-        
+
         sutDispatch(ReduxAction.isLoading(true))
-        
+
         XCTAssert(
             expectedState.title == sutGetState().title,
             "Expected titles to match but got \(expectedState.title) instead"
@@ -56,17 +56,17 @@ final class ReduxIntegrationTests: XCTestCase {
             "Expected result to be <.idle> but got \(expectedState.sideEffectResult)"
         )
     }
-    
+
     func test_middleware_triggers_action_after_async_operation() {
         var expectedState: ReduxAppState!
         let subscriber = Listener<ReduxAppState> { expectedState = $0 }
-        let asyncExpectation = self.expectation(description: "Async operation on middleware")
+        let asyncExpectation = expectation(description: "Async operation on middleware")
         let middleware = applyMiddleware(middlewares: [reduxMiddleware(testExpectation: asyncExpectation)])
         let (sutDispatch, sutSubscribe, sutGetState) = middleware(createStore)(reduxReducer, ReduxAppState.initialState)
         _ = sutSubscribe(subscriber)
-        
+
         sutDispatch(ReduxAction.triggerAsyncOperation)
-        
+
         XCTAssert(
             expectedState.title == sutGetState().title,
             "Expected titles to match but got \(expectedState.title) instead"
@@ -75,7 +75,7 @@ final class ReduxIntegrationTests: XCTestCase {
             expectedState.isLoading == sutGetState().isLoading,
             "Expected loading states to match but found \(expectedState.isLoading)"
         )
-        
+
         waitForExpectations(timeout: delay + 0.1, handler: nil)
         XCTAssert(
             expectedState.sideEffectResult == .success("middleware-success"),
@@ -85,6 +85,7 @@ final class ReduxIntegrationTests: XCTestCase {
 }
 
 // MARK: - AppState
+
 struct ReduxAppState: Equatable {
     let title: String
     let isLoading: Bool
@@ -114,57 +115,57 @@ enum ReduxAction: Action {
 
 // MARK: - Reducer
 
-func reduxReducer(action: Action, state: inout ReduxAppState) -> Void {
+func reduxReducer(action: Action, state: inout ReduxAppState) {
     guard let action = action as? ReduxAction else { return }
-    
+
     switch action {
-        case .setTitle(let value):
-            state = ReduxAppState(
-                title: value,
-                isLoading: state.isLoading,
-                sideEffectResult: state.sideEffectResult
-            )
-        case .isLoading(let value):
-            state = ReduxAppState(
-                title: state.title,
-                isLoading: value,
-                sideEffectResult: state.sideEffectResult
-            )
-        case .setSideEffectResult(let value):
-            state = ReduxAppState(
-                title: state.title,
-                isLoading: state.isLoading,
-                sideEffectResult: value
-            )
-        case .triggerAsyncOperation:
-            state = ReduxAppState(
-                title: state.title,
-                isLoading: state.isLoading,
-                sideEffectResult: state.sideEffectResult
-            )
+    case let .setTitle(value):
+        state = ReduxAppState(
+            title: value,
+            isLoading: state.isLoading,
+            sideEffectResult: state.sideEffectResult
+        )
+    case let .isLoading(value):
+        state = ReduxAppState(
+            title: state.title,
+            isLoading: value,
+            sideEffectResult: state.sideEffectResult
+        )
+    case let .setSideEffectResult(value):
+        state = ReduxAppState(
+            title: state.title,
+            isLoading: state.isLoading,
+            sideEffectResult: value
+        )
+    case .triggerAsyncOperation:
+        state = ReduxAppState(
+            title: state.title,
+            isLoading: state.isLoading,
+            sideEffectResult: state.sideEffectResult
+        )
     }
 }
 
 // MARK: - Middleware
 
-func reduxMiddleware(testExpectation: XCTestExpectation? = nil) ->  Middleware<ReduxAppState> {
-    { getState, dispatchFunction in {
+func reduxMiddleware(testExpectation: XCTestExpectation? = nil) -> Middleware<ReduxAppState> {
+    { _, dispatchFunction in {
         next in {
             action in
             next(action)
-            
+
             guard let action = action as? ReduxAction else { return }
-            
+
             switch action {
-                case .triggerAsyncOperation:
-                    DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
-                        dispatchFunction(
-                            ReduxAction
-                                .setSideEffectResult(ReduxAppState.SideEffectResult.success("middleware-success"))
-                        )
-                        testExpectation?.fulfill()
-                    }
-                default: break
+            case .triggerAsyncOperation:
+                DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
+                    dispatchFunction(
+                        ReduxAction
+                            .setSideEffectResult(ReduxAppState.SideEffectResult.success("middleware-success"))
+                    )
+                    testExpectation?.fulfill()
+                }
+            default: break
             }
         }
     }
