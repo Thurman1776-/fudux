@@ -12,6 +12,16 @@ public typealias Subscribe<State> = (Listener<State>) -> () -> Void
 
 public typealias StoreAPI<State> = (@escaping (Action, inout State) -> Void, State) -> (DispatchFunction, Subscribe<State>, GetState<State>)
 
+/// Creates a Redux store that holds the state tree.
+/// The only way to change the data in the store is to call `dispatch()` on it.
+///
+/// There should only be a single store in your app.
+/// - Parameters:
+///   - reducer: reducer A function that returns the next state tree,
+///   given the current state tree and the action to handle.
+///   - initialState: The initial state.
+/// - Returns: A Redux store that lets you read the state, dispatch actions and subscribe to changes.
+
 public func createStore<State: Equatable>(
     reducer: @escaping (Action, inout State) -> Void,
     initialState: State
