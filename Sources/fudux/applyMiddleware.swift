@@ -27,7 +27,14 @@ public func applyMiddleware<State>(middlewares: [Middleware<State>])
 {
     { createStore in { reducer, initialState in
         let (storeDispatch, storeSubscribe, storeGetState) = createStore(reducer, initialState)
-        var patchedDispatch: DispatchFunction!
+        var patchedDispatch: DispatchFunction! = { _ in
+            fatalError(
+                """
+                    Dispatching while constructing your middleware is not allowed.
+                    Other middleware would not be applied to this dispatch.
+                """
+            )
+        }
 
         func thunkDispatch(action: Action) {
             patchedDispatch(action)
