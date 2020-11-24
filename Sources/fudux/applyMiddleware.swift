@@ -10,7 +10,7 @@ public typealias WrapDispatch = (Action) -> Void
 public typealias Middleware<State> = (@escaping GetState<State>, @escaping DispatchFunction) -> (@escaping WrapDispatch) -> HandleAction
 public typealias StoreEnhancer<State> = (@escaping StoreAPI<State>) -> StoreAPI<State>
 
-/// /**
+///
 /// Creates a store enhancer that applies middleware to the dispatch method
 /// of the Redux store. This is handy for a variety of tasks, such as expressing
 /// asynchronous actions in a concise manner, or logging every action.
