@@ -1,10 +1,17 @@
+//
+//  CreateStoreTests.swift
+//  fuduxTests
+//
+//  Created by Daniel Garcia
+//
+
 @testable import fudux
 import XCTest
 
 final class CreateStoreTests: XCTestCase {
     func test_create_store_sets_correct_initial_state() {
         let initialState = CounterState(count: 0)
-        let sut: Store<CounterState> = createStore
+        let sut: StoreAPI<CounterState> = createStore
 
         let (_, _, getState) = sut(testReducer, initialState)
 
@@ -17,7 +24,7 @@ final class CreateStoreTests: XCTestCase {
     func test_create_store_updates_state_using_reducer() {
         let initialState = CounterState(count: 0)
         let expectedState = CounterState(count: 1)
-        let sut: Store<CounterState> = createStore
+        let sut: StoreAPI<CounterState> = createStore
 
         let (dispatch, _, getState) = sut(testReducer, initialState)
         dispatch(TestAction.input)
@@ -33,7 +40,7 @@ final class CreateStoreTests: XCTestCase {
         var expectedState: CounterState?
         let listener = Listener<CounterState> { expectedState = $0 }
 
-        let sut: Store<CounterState> = createStore
+        let sut: StoreAPI<CounterState> = createStore
         let (dispatch, subscribe, getState) = sut(testReducer, initialState)
         _ = subscribe(listener)
 
@@ -50,7 +57,7 @@ final class CreateStoreTests: XCTestCase {
         var expectedState: CounterState?
         let listener = Listener<CounterState> { expectedState = $0 }
 
-        let sut: Store<CounterState> = createStore
+        let sut: StoreAPI<CounterState> = createStore
         let (dispatch, subscribe, getState) = sut(testReducer, initialState)
         let unsubscribe = subscribe(listener)
 
@@ -63,21 +70,4 @@ final class CreateStoreTests: XCTestCase {
             "Expected count to have increased by 1, but got \(getState().count)"
         )
     }
-}
-
-// MARK: - Tests data types
-
-struct CounterState: Equatable {
-    let count: Int
-}
-
-func testReducer(action: Action, state: inout CounterState) -> Void {
-    switch action as! TestAction {
-    case .input:
-        state = CounterState(count: state.count + 1)
-    }
-}
-
-enum TestAction: Action {
-    case input
 }

@@ -1,3 +1,10 @@
+//
+//  Listener.swift
+//  fudux
+//
+//  Created by Daniel Garcia
+//
+
 public final class Listener<State> {
     public let updateTo: (State) -> Void
 
