@@ -66,41 +66,48 @@ final class ComposeTests: XCTestCase {
         )
     }
 
-    func test_enhancing_store_with_middleware_first() {
+    func test_enhancing_store_with_middleware_first() throws {
         let firstEnhancer: StoreEnhancer<ReduxAppState> = firstEnhancingFunction("one")
         let secondEnhancer: StoreEnhancer<ReduxAppState> = secondEnhancingFunction("two")
         let middleware = applyMiddleware(middlewares: [dummyMiddleware()])
         let expectedState = ReduxAppState(title: "New title", isLoading: false, sideEffectResult: .idle)
+        let expectedNumberOfItemsAfterMiddleware = 2
 
-        // Set the middleware first on the chain
-        // Its job is to "clean" "loggedActions" & "orderedValues" BEFORE the enhancers are run
+        // Set the middleware first in the chain
+        // Its job is to erase <loggedActions> & <orderedValues> BEFORE the enhancers are run
         let sut = middleware >>> firstEnhancer >>> secondEnhancer
         let enhancedStore = sut(createStore)
         let (dispatch, _, getState) = enhancedStore(reduxReducer, ReduxAppState.initialState)
-        loggedActions = ["fake": ReduxAction.isLoading(true)]
-        orderedValues = ["fake"]
+        
+        // MARK: - Precondition: Prepopulate array & dictionary
+        loggedActions = ["to_be_removed_by_middleware": ReduxAction.isLoading(true)]
+        orderedValues = ["to_be_removed_by_middleware"]
 
         dispatch(ReduxAction.setTitle("New title"))
 
         XCTAssert(
             expectedState == getState(),
-            "Expected states to be \(expectedState) but found \(getState())"
+            "Expected state to be \(expectedState) but found \(getState()) instead"
         )
         XCTAssert(
-            loggedActions.count == 2,
+            loggedActions.count == expectedNumberOfItemsAfterMiddleware,
             "Expected middleware to have had removed 1 item but got \(loggedActions.count) instead"
         )
+        
+        let firstLoggedAction = try XCTUnwrap(loggedActions["one"])
         XCTAssertNotNil(
             loggedActions["one"],
-            "Expected to have logged <ReduxAction.setTitle> but found \(loggedActions["one"]!))"
+            "Expected to have logged <ReduxAction.setTitle> but found \(firstLoggedAction))"
         )
+        
+        let secondLoggedAction = try XCTUnwrap(loggedActions["two"])
         XCTAssertNotNil(
             loggedActions["two"],
-            "Expected to have logged <ReduxAction.setTitle> but found \(loggedActions["two"]!))"
+            "Expected to have logged <ReduxAction.setTitle> but found \(secondLoggedAction))"
         )
         XCTAssert(
             try XCTUnwrap(orderedValues.first == "one"),
-            "Expected to find value <one> but got \(orderedValues.first!)"
+            "Expected to find value <one> but got \(orderedValues[0])"
         )
         XCTAssert(
             try XCTUnwrap(orderedValues[1] == "two"),
