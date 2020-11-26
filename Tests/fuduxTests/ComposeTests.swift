@@ -115,33 +115,35 @@ final class ComposeTests: XCTestCase {
         )
     }
 
-    func test_enhancing_store_with_middlewares_last() {
+    func test_enhancing_store_with_middleware_last() {
         let firstEnhancer: StoreEnhancer<ReduxAppState> = firstEnhancingFunction("one")
         let secondEnhancer: StoreEnhancer<ReduxAppState> = secondEnhancingFunction("two")
         let middleware = applyMiddleware(middlewares: [dummyMiddleware()])
         let expectedState = ReduxAppState(title: "New title", isLoading: false, sideEffectResult: .idle)
 
-        // Set the middleware last on the chain
-        // Its job is to "clean" "loggedActions" & "orderedValues" AFTER the enhancers are run
+        // Set the middleware last in the chain
+        // Its job is to erase <loggedActions> & <orderedValues> AFTER the enhancers are run
         let sut = firstEnhancer >>> secondEnhancer >>> middleware
         let enhancedStore = sut(createStore)
         let (dispatch, _, getState) = enhancedStore(reduxReducer, ReduxAppState.initialState)
-        loggedActions = ["fake": ReduxAction.isLoading(true)]
-        orderedValues = ["fake"]
+        
+        // MARK: - Precondition: Prepopulate array & dictionary
+        loggedActions = ["to_be_removed_by_middleware": ReduxAction.isLoading(true)]
+        orderedValues = ["to_be_removed_by_middleware"]
 
         dispatch(ReduxAction.setTitle("New title"))
 
         XCTAssert(
             expectedState == getState(),
-            "Expected states to be \(expectedState) but found \(getState())"
+            "Expected state to be \(expectedState) but found \(getState()) instead"
         )
         XCTAssert(
             loggedActions.count == 0,
-            "Expected <loggedActions> to have been cleaned by middleware! Got \(loggedActions.count)"
+            "Expected <loggedActions> to have been emptied by middleware! Got \(loggedActions.count)"
         )
         XCTAssert(
             orderedValues.count == 0,
-            "Expected <orderedValues> to have been cleaned by middleware! Got \(orderedValues.count)"
+            "Expected <orderedValues> to have been emptied by middleware! Got \(orderedValues.count)"
         )
     }
 }
