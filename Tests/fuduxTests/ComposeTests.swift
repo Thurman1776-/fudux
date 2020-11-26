@@ -42,15 +42,19 @@ final class ComposeTests: XCTestCase {
 
         XCTAssert(
             expectedState == getState(),
-            "Expected states to match but found \(getState())"
+            "Expected to state to be \(expectedState) but found \(getState())"
         )
+        
+        let firstLoggedAction = try XCTUnwrap(loggedActions["first"])
         XCTAssertNotNil(
             loggedActions["first"],
-            "Expected to have logged <ReduxAction.setTitle> but found \(loggedActions["first"]!))"
+            "Expected to have logged <ReduxAction.setTitle> but found \(firstLoggedAction))"
         )
+        
+        let secondLoggedAction = try XCTUnwrap(loggedActions["second"])
         XCTAssertNotNil(
             loggedActions["second"],
-            "Expected to have logged <ReduxAction.setTitle> but found \(loggedActions["first"]!))"
+            "Expected to have logged <ReduxAction.setTitle> but found \(secondLoggedAction))"
         )
         XCTAssert(
             try XCTUnwrap(orderedValues.first == "first"),
