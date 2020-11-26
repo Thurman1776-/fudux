@@ -148,6 +148,8 @@ final class ComposeTests: XCTestCase {
     }
 }
 
+// MARK: - Test helpers
+
 private var loggedActions = [String: Action]()
 private var orderedValues: [String] = []
 
@@ -183,6 +185,8 @@ private func secondEnhancingFunction<State>(_ value: String) -> StoreEnhancer<St
     }
     }
 }
+
+// MARK: - Plain simple middleware
 
 private func dummyMiddleware() -> Middleware<ReduxAppState> {
     { _, _ in { next in
