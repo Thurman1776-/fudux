@@ -66,7 +66,7 @@ final class ComposeTests: XCTestCase {
         )
     }
 
-    func test_enhancing_store_with_middlewares_first() {
+    func test_enhancing_store_with_middleware_first() {
         let firstEnhancer: StoreEnhancer<ReduxAppState> = firstEnhancingFunction("one")
         let secondEnhancer: StoreEnhancer<ReduxAppState> = secondEnhancingFunction("two")
         let middleware = applyMiddleware(middlewares: [dummyMiddleware()])
