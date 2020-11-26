@@ -29,7 +29,7 @@ final class ComposeTests: XCTestCase {
         XCTAssert(result.isEmpty == false, "Expected a non-empty string!")
     }
 
-    func test_enhancing_store() throws {
+    func test_enhancing_store_with_plain_enhancer() throws {
         let firstEnhancer: StoreEnhancer<ReduxAppState> = firstEnhancingFunction("first")
         let secondEnhancer: StoreEnhancer<ReduxAppState> = secondEnhancingFunction("second")
         let expectedState = ReduxAppState(title: "New title", isLoading: false, sideEffectResult: .idle)
