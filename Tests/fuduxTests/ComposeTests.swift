@@ -139,7 +139,7 @@ final class ComposeTests: XCTestCase {
 private var loggedActions = [String: Action]()
 private var orderedValues: [String] = []
 
-// None of these enhancers swallow actions to original store's dispatch!!
+// None of these enhancers swallow actions from original store's dispatch!!
 private func firstEnhancingFunction<State>(_ value: String) -> StoreEnhancer<State> {
     return { createStore in {
         reducer, state in
