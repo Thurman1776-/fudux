@@ -29,9 +29,11 @@ final class ComposeTests: XCTestCase {
         XCTAssert(result.isEmpty == false, "Expected a non-empty string!")
     }
 
-    func test_enhancing_store_with_plain_enhancer() throws {
-        let firstEnhancer: StoreEnhancer<ReduxAppState> = firstEnhancingFunction("first")
-        let secondEnhancer: StoreEnhancer<ReduxAppState> = secondEnhancingFunction("second")
+    func test_enhancing_store_with_plain_enhancers() throws {
+        let firstValue = "first"
+        let secondValue = "second"
+        let firstEnhancer: StoreEnhancer<ReduxAppState> = firstEnhancingFunction(firstValue)
+        let secondEnhancer: StoreEnhancer<ReduxAppState> = secondEnhancingFunction(secondValue)
         let expectedState = ReduxAppState(title: "New title", isLoading: false, sideEffectResult: .idle)
 
         let sut = firstEnhancer >>> secondEnhancer
@@ -42,27 +44,27 @@ final class ComposeTests: XCTestCase {
 
         XCTAssert(
             expectedState == getState(),
-            "Expected to state to be \(expectedState) but found \(getState())"
+            "Expected state to be \(expectedState) but found \(getState())"
         )
         
-        let firstLoggedAction = try XCTUnwrap(loggedActions["first"])
+        let firstLoggedAction = try XCTUnwrap(loggedActions[firstValue])
         XCTAssertNotNil(
-            loggedActions["first"],
+            loggedActions[firstValue],
             "Expected to have logged <ReduxAction.setTitle> but found \(firstLoggedAction))"
         )
         
-        let secondLoggedAction = try XCTUnwrap(loggedActions["second"])
+        let secondLoggedAction = try XCTUnwrap(loggedActions[secondValue])
         XCTAssertNotNil(
-            loggedActions["second"],
+            loggedActions[secondValue],
             "Expected to have logged <ReduxAction.setTitle> but found \(secondLoggedAction))"
         )
         XCTAssert(
-            try XCTUnwrap(orderedValues.first == "first"),
-            "Expected to find value <first> but got \(orderedValues.first!)"
+            try XCTUnwrap(orderedValues.first == firstValue),
+            "Expected to find value \(firstValue) but got \(orderedValues[0])"
         )
         XCTAssert(
-            try XCTUnwrap(orderedValues[1] == "second"),
-            "Expected to find value <second> but got \(orderedValues[1])"
+            try XCTUnwrap(orderedValues[1] == secondValue),
+            "Expected to find value \(secondValue) but got \(orderedValues[1])"
         )
     }
 
