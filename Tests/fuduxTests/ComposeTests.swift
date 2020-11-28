@@ -69,8 +69,10 @@ final class ComposeTests: XCTestCase {
     }
 
     func test_enhancing_store_with_middleware_first() throws {
-        let firstEnhancer: StoreEnhancer<ReduxAppState> = firstEnhancingFunction("one")
-        let secondEnhancer: StoreEnhancer<ReduxAppState> = secondEnhancingFunction("two")
+        let firstValue = "one"
+        let secondValue = "two"
+        let firstEnhancer: StoreEnhancer<ReduxAppState> = firstEnhancingFunction(firstValue)
+        let secondEnhancer: StoreEnhancer<ReduxAppState> = secondEnhancingFunction(secondValue)
         let middleware = applyMiddleware(middlewares: [dummyMiddleware()])
         let expectedState = ReduxAppState(title: "New title", isLoading: false, sideEffectResult: .idle)
         let expectedNumberOfItemsAfterMiddleware = 2
@@ -93,33 +95,35 @@ final class ComposeTests: XCTestCase {
         )
         XCTAssert(
             loggedActions.count == expectedNumberOfItemsAfterMiddleware,
-            "Expected middleware to have had removed 1 item but got \(loggedActions.count) instead"
+            "Expected to find \(expectedNumberOfItemsAfterMiddleware) items but got \(loggedActions.count) instead"
         )
         
-        let firstLoggedAction = try XCTUnwrap(loggedActions["one"])
+        let firstLoggedAction = try XCTUnwrap(loggedActions[firstValue])
         XCTAssertNotNil(
-            loggedActions["one"],
+            loggedActions[firstValue],
             "Expected to have logged <ReduxAction.setTitle> but found \(firstLoggedAction))"
         )
         
-        let secondLoggedAction = try XCTUnwrap(loggedActions["two"])
+        let secondLoggedAction = try XCTUnwrap(loggedActions[secondValue])
         XCTAssertNotNil(
-            loggedActions["two"],
+            loggedActions[secondValue],
             "Expected to have logged <ReduxAction.setTitle> but found \(secondLoggedAction))"
         )
         XCTAssert(
-            try XCTUnwrap(orderedValues.first == "one"),
-            "Expected to find value <one> but got \(orderedValues[0])"
+            try XCTUnwrap(orderedValues.first == firstValue),
+            "Expected to find value \(firstValue) but got \(orderedValues[0])"
         )
         XCTAssert(
-            try XCTUnwrap(orderedValues[1] == "two"),
-            "Expected to find value <two> but got \(orderedValues[1])"
+            try XCTUnwrap(orderedValues[1] == secondValue),
+            "Expected to find value \(secondValue) but got \(orderedValues[1])"
         )
     }
 
     func test_enhancing_store_with_middleware_last() {
-        let firstEnhancer: StoreEnhancer<ReduxAppState> = firstEnhancingFunction("one")
-        let secondEnhancer: StoreEnhancer<ReduxAppState> = secondEnhancingFunction("two")
+        let firstValue = "one"
+        let secondValue = "two"
+        let firstEnhancer: StoreEnhancer<ReduxAppState> = firstEnhancingFunction(firstValue)
+        let secondEnhancer: StoreEnhancer<ReduxAppState> = secondEnhancingFunction(secondValue)
         let middleware = applyMiddleware(middlewares: [dummyMiddleware()])
         let expectedState = ReduxAppState(title: "New title", isLoading: false, sideEffectResult: .idle)
 
