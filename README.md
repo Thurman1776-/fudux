@@ -87,6 +87,10 @@ By definition, a reducer should be a pure function (free of side effects). It re
 
 What holds state & forwads actions to mutate such state, is called a Store. You create a store by doing: 
 
+```swift
+createStore(reducer: fuduxReducer, initialState: FuduxAppState(count: 0))
+```
+
 It is up to you how you want to keep the functions created by the Store around. This library isn't opinionated on how you should do that. 
 
 For a quick & simple example, let's say you declare it at the top level of your program entry:
