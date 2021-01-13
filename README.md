@@ -46,9 +46,6 @@ let package = Package(
 
 # Example
 
-# About fudux
-
-
 Given a simple app that keeps track of a counter which can be increased and decreased, you could hold that state in a data type like so:
 
 ```swift
