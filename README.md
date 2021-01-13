@@ -213,7 +213,7 @@ In case you want to see how everything plays along together, have a look at the 
 
 # Alternatives
 
-Make sure to check out these other great alternatives that following the same principle: 
+Make sure to check out these great alternatives that following the same principle but built with different approaches: 
 
 - [ReSwift](https://github.com/ReSwift/ReSwift)
 - [Composable architecture by pointfreeco](https://github.com/pointfreeco/swift-composable-architecture)
