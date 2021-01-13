@@ -12,7 +12,8 @@ The whole implementation is just 2 functions:
 - [createStore function](https://github.com/Thurman1776-/fudux/blob/main/Sources/fudux/createStore.swift)
 - [applyMiddleware function](https://github.com/Thurman1776-/fudux/blob/main/Sources/fudux/applyMiddleware.swift)
 
-Those are the barebones you need to get started. There's a utility [compose function](https://github.com/Thurman1776-/fudux/blob/main/Sources/fudux/compose.swift) that lets chain these (and other APIs alike) functions together.  
+Those are the barebones you need to get started. 
+There's a utility [compose function](https://github.com/Thurman1776-/fudux/blob/main/Sources/fudux/compose.swift) that allows you to enhance the store with custom functionality, such as logging, storing actions, running actions on a queue, etc. 
 
 
 # Table of Contents
@@ -150,7 +151,61 @@ Note that `ContentView` is using indiscriminately the `dispatch` function origin
 
 Whenever you tap on the `Tap to increase` or `Tap to decrease` buttons, they will emit corresponding actions. Such actions will go through to store & and its reducers. Because of the nature of SwiftUI, any change to `appState` in `IntegrateFuduxApp` will trigger a UI update. 
 
-### Introduce side effects
+### Managing side effects
+
+To describe & execute work that includes side effects, you can define middleware functions that can dispatch further actions upon sucess/failure. 
+
+Given that you include an additional case statement in `FuduxAction` enum, let's call it `reset`, in your reducer you can just reset the current count: 
+
+```swift
+func fuduxReducer(action: Action, state: inout FuduxAppState) {
+    // ... other cases handled already
+    case .reset:
+        state = FuduxAppState(count: 0)
+    }
+}
+```
+
+Then, define your custom function that retuns a middleware conforming to the same type your app state is, in this example, `FuduxAppState`. 
+
+You return 3 closures: 
+- First: takes the current app state function and a dispatch function
+- Second: takes a function that refers to the next middleware in the chain, or the original store's dispatch if it is the last one. 
+- Third: takes the dispatched action. This is what you would react to. 
+
+Note: Ideally you inject entities to the function as a form of Dependency Injection.
+
+```swift
+func fuduxMiddleware(dispatchQueue: DispatchQueue) -> Middleware<FuduxAppState> {
+    {
+        getState, dispatchFunction in {
+            next in {
+                action in
+                next(action)
+                
+                // When count reaches 3, the middleware resets the count property to zero after
+                // 2 seconds
+                if getState().count == 3 {
+                    // Fire any heavy / long running task
+                    dispatchQueue.asyncAfter(deadline: .now() + 2) {
+                        dispatchFunction(FuduxAction.reset)
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+Next, you need to register such side effect. For this, you use the `applyMiddleware` function: 
+
+```swift
+let appliedMiddledwares = applyMiddleware(middlewares: [fuduxMiddleware(dispatchQueue: DispatchQueue.global())])
+let composedStore = appliedMiddledwares(createStore)
+let (dispatch, subscribe, getState) = composedStore(fuduxReducer, FuduxAppState(count: 0))
+```
+
+What this middleware ends up doing is, resetting the count to zero after 2 seconds when the state reaches 3. 
 
 # Understading the library
 
@@ -170,3 +225,4 @@ Make sure to check out these other great alternatives that following the same pr
 
 - [ReSwift](https://github.com/ReSwift/ReSwift)
 - [Composable architecture by pointfreeco](https://github.com/pointfreeco/swift-composable-architecture)
+ - [Fluxor](https://github.com/FluxorOrg/Fluxor)
