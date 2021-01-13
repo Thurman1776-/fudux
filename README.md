@@ -21,7 +21,6 @@ There's a utility [compose function](https://github.com/Thurman1776-/fudux/blob/
 - [Installation](#installation)
 - [Example](#example)
 - [Understading the library](#understading-the-library)
-- [Contributing](#contributing)
 - [Credits](#credits)
 - [Alternatives](#alternatives)
 
@@ -210,10 +209,6 @@ What this middleware ends up doing is, resetting the count to zero after 2 secon
 # Understading the library
 
 In case you want to see how everything plays along together, have a look at the [integration tests](https://github.com/Thurman1776-/fudux/blob/main/Tests/fuduxTests/ReduxIntegrationTests.swift). They should provide a general overview of API usage.
-
-# Contributing
-
--- TODO
 
 # Credits
 
