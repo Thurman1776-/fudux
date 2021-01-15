@@ -145,7 +145,7 @@ struct ContentView: View {
 Note that `ContentView` is using indiscriminately the `dispatch` function originally declared in `IntegrateFuduxApp`. Again, do not take this as the way to establish these relationships, you're free to do whatever you want.  This is just for demonstration purposes.  
 
 
-Whenever you tap on the `Tap to increase` or `Tap to decrease` buttons, they will emit corresponding actions. Such actions will go through to store & and its reducers. Because of the nature of SwiftUI, any change to `appState` in `IntegrateFuduxApp` will trigger a UI update. 
+Whenever you tap on the `Tap to increase` or `Tap to decrease` buttons, they will emit corresponding actions. Such actions will go through to the store & and its reducers. Because of the nature of SwiftUI, any change to `appState` in `IntegrateFuduxApp` will trigger a UI update. 
 
 ### Managing side effects
 
@@ -209,11 +209,11 @@ In case you want to see how everything plays along together, have a look at the 
 
 # Credits
 
-- Nothing here is new, all credit goes to [Dan Abramov](https://github.com/gaearon). I just translated the javascript implementation in Swift as closely as possible. No protocols nor inheritance, just plain simple functions. 
+- Nothing here is new, all credit goes to [Dan Abramov](https://github.com/gaearon). I just tried to translate the javascript implementation in Swift as closely as possible. No protocols nor inheritance, just plain simple functions. 
 
 # Alternatives
 
-Make sure to check out these great alternatives that following the same principle but built with different approaches: 
+Make sure to check out these great alternatives that follow the same principle but built with different approaches: 
 
 - [ReSwift](https://github.com/ReSwift/ReSwift)
 - [Composable architecture by pointfreeco](https://github.com/pointfreeco/swift-composable-architecture)
