@@ -9,8 +9,9 @@ public protocol Action {}
 public typealias DispatchFunction = (Action) -> Void
 public typealias GetState<State> = () -> State
 public typealias Subscribe<State> = (Listener<State>) -> () -> Void
+public typealias Reducer<State> = (Action, inout State) -> Void
 
-public typealias StoreAPI<State> = (@escaping (Action, inout State) -> Void, State) -> (DispatchFunction, Subscribe<State>, GetState<State>)
+public typealias StoreAPI<State> = (@escaping Reducer<State>, State) -> (DispatchFunction, Subscribe<State>, GetState<State>)
 
 /// Creates a Redux store that holds the state tree.
 /// The only way to change the data in the store is to call `dispatch()` on it.
