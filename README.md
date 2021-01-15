@@ -106,8 +106,8 @@ struct IntegrateFuduxApp: App {
         WindowGroup {
             ContentView(appState: appState)
                 .onAppear {
-                    let listener = Listener<FuduxAppState> { appState = $0 }
-                    unsubscribe = subscribe(listener)
+                    let observer = Observer<FuduxAppState> { appState = $0 }
+                    unsubscribe = subscribe(observer)
                 }
                 .onDisappear {
                     unsubscribe()

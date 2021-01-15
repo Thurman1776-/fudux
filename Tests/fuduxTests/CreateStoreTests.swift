@@ -35,14 +35,14 @@ final class CreateStoreTests: XCTestCase {
         )
     }
 
-    func test_create_store_notifies_listeners_about_state_change() throws {
+    func test_create_store_notifies_observers_about_state_change() throws {
         let initialState = CounterState(count: 0)
         var expectedState: CounterState?
-        let listener = Listener<CounterState> { expectedState = $0 }
+        let observer = Observer<CounterState> { expectedState = $0 }
 
         let sut: StoreAPI<CounterState> = createStore
         let (dispatch, subscribe, getState) = sut(testReducer, initialState)
-        _ = subscribe(listener)
+        _ = subscribe(observer)
 
         dispatch(TestAction.input)
 
@@ -52,14 +52,14 @@ final class CreateStoreTests: XCTestCase {
         )
     }
 
-    func test_create_store_unsubscribes_listeners() throws {
+    func test_create_store_unsubscribes_observers() throws {
         let initialState = CounterState(count: 0)
         var expectedState: CounterState?
-        let listener = Listener<CounterState> { expectedState = $0 }
+        let observer = Observer<CounterState> { expectedState = $0 }
 
         let sut: StoreAPI<CounterState> = createStore
         let (dispatch, subscribe, getState) = sut(testReducer, initialState)
-        let unsubscribe = subscribe(listener)
+        let unsubscribe = subscribe(observer)
 
         dispatch(TestAction.input)
         unsubscribe()

@@ -13,10 +13,10 @@ let delay: TimeInterval = 0.1
 final class ReduxIntegrationTests: XCTestCase {
     func test_title_is_updated_by_reducer_and_subscriber_gets_updated() {
         var expectedState: ReduxAppState!
-        let subscriber = Listener<ReduxAppState> { expectedState = $0 }
+        let observer = Observer<ReduxAppState> { expectedState = $0 }
         let middleware = applyMiddleware(middlewares: [reduxMiddleware()])
         let (sutDispatch, sutSubscribe, sutGetState) = middleware(createStore)(reduxReducer, ReduxAppState.initialState)
-        _ = sutSubscribe(subscriber)
+        _ = sutSubscribe(observer)
 
         sutDispatch(ReduxAction.setTitle("New title"))
 
@@ -36,10 +36,10 @@ final class ReduxIntegrationTests: XCTestCase {
 
     func test_loading_state_is_updated_by_reducer_and_subscriber_gets_updated() {
         var expectedState: ReduxAppState!
-        let subscriber = Listener<ReduxAppState> { expectedState = $0 }
+        let observer = Observer<ReduxAppState> { expectedState = $0 }
         let middleware = applyMiddleware(middlewares: [reduxMiddleware()])
         let (sutDispatch, sutSubscribe, sutGetState) = middleware(createStore)(reduxReducer, ReduxAppState.initialState)
-        _ = sutSubscribe(subscriber)
+        _ = sutSubscribe(observer)
 
         sutDispatch(ReduxAction.isLoading(true))
 
@@ -59,11 +59,11 @@ final class ReduxIntegrationTests: XCTestCase {
 
     func test_middleware_triggers_action_after_async_operation() {
         var expectedState: ReduxAppState!
-        let subscriber = Listener<ReduxAppState> { expectedState = $0 }
+        let observer = Observer<ReduxAppState> { expectedState = $0 }
         let asyncExpectation = expectation(description: "Async operation on middleware")
         let middleware = applyMiddleware(middlewares: [reduxMiddleware(testExpectation: asyncExpectation)])
         let (sutDispatch, sutSubscribe, sutGetState) = middleware(createStore)(reduxReducer, ReduxAppState.initialState)
-        _ = sutSubscribe(subscriber)
+        _ = sutSubscribe(observer)
 
         sutDispatch(ReduxAction.triggerAsyncOperation)
 
