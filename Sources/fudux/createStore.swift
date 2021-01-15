@@ -8,7 +8,7 @@
 public protocol Action {}
 public typealias DispatchFunction = (Action) -> Void
 public typealias GetState<State> = () -> State
-public typealias Subscribe<State> = (Listener<State>) -> () -> Void
+public typealias Subscribe<State> = (Observer<State>) -> () -> Void
 public typealias Reducer<State> = (Action, inout State) -> Void
 
 public typealias StoreAPI<State> = (@escaping Reducer<State>, State) -> (DispatchFunction, Subscribe<State>, GetState<State>)
@@ -30,7 +30,7 @@ public func createStore<State: Equatable>(
     -> (DispatchFunction, Subscribe<State>, GetState<State>)
 {
     var state: State = initialState
-    var listeners: [Listener<State>] = []
+    var observers: [Observer<State>] = []
     var isDispatching = false
 
     func getState() -> State { state }
@@ -43,12 +43,12 @@ public func createStore<State: Equatable>(
         isDispatching = true
         reducer(action, &state)
         isDispatching = false
-        listeners.forEach { $0.updateTo(state) }
+        observers.forEach { $0.newState(state) }
     }
 
-    func subscribe(listener: Listener<State>) -> () -> Void {
+    func subscribe(observer: Observer<State>) -> () -> Void {
         let unsubscribeFunction: () -> Void = {
-            listeners = listeners.filter { $0 !== listener }
+            observers = observers.filter { $0 !== observer }
         }
         guard !isDispatching else {
             fatalError(
@@ -60,7 +60,7 @@ public func createStore<State: Equatable>(
             )
         }
 
-        listeners.append(listener)
+        observers.append(observer)
         return unsubscribeFunction
     }
 
